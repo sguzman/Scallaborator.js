@@ -25,6 +25,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.google.code.gson" % "gson" % "2.8.2",
   "com.criteo.lolhttp" % "lolhttp_2.12" % "0.8.1",
+  "fr.hmil" % "roshttp_2.12" % "2.0.2",
   "org.feijoas" % "mango_2.12" % "0.14"
 )
 
