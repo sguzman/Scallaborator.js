@@ -35,10 +35,10 @@ object Main {
     val request = Util.getRequest(url, cookie)
     val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Statement](t.body).right.get.body.driver.trip_earnings.trips.keySet.toList) match {
-        case Success(v) =>
+        case Success(_) =>
           println(s"!!!$statementUUID!!! @ $i")
           true
-        case Failure(e) => false
+        case Failure(_) => false
       }
     })
 
@@ -54,10 +54,10 @@ object Main {
     val request = Util.getRequest(url).header("Cookie", cookie)
     val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Trip](t.body).right.get) match {
-        case Success(v) =>
+        case Success(_) =>
           println(s"!!!$tripUUID!!! @ $i")
           true
-        case Failure(e) => false
+        case Failure(_) => false
       }
     })
 
