@@ -35,5 +35,7 @@ object Main {
       .map(_.trips)
       .map(_.keySet)
       .flatMap(_.toList)
+
+    println(statementResponses.length)
   }
 }
