@@ -1,6 +1,6 @@
 package com.github.sguzman.scala.scal.uber
 
-import java.io.{BufferedWriter, File, FileWriter}
+import java.io.{File, FileWriter, PrintWriter}
 import java.net.SocketTimeoutException
 
 import io.circe.parser.decode
@@ -40,7 +40,7 @@ object Util {
       ) {
         println(s"Putting key:${req.url}, value:${v.body}")
         this.map.put(req.url, v.body)
-        val bw = new BufferedWriter(new FileWriter(this.file))
+        val bw = new PrintWriter(new FileWriter(this.file))
         bw.write(this.map.asJson.toString)
         bw.close()
         v.body
