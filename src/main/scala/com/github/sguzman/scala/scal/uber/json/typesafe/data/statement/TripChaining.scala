@@ -6,5 +6,5 @@ case class TripChaining(
                        chain_index: Option[String],
                        normalized_distance: Double,
                        chain_uuid: UUID,
-                       normalized_duration: Long
+                       normalized_duration: Option[Long]
                        )
