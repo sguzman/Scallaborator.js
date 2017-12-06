@@ -3,15 +3,15 @@ package com.github.sguzman.scala.scal.uber.json.typesafe.data.trip
 import java.util.UUID
 
 case class Trip(
-               dropOffAddress: String,
+               dropOffAddress: Option[String],
                marketplace: String,
                licensePlate: String,
-               customRouteMap: String,
+               customRouteMap: Option[String],
                totalToll: Option[String],
                cashCollected: Option[String],
                isProcessing: Boolean,
                timezone: String,
-               pickupAddress: String,
+               pickupAddress: Option[String],
                total: String,
                vehicleType: String,
                fareAdjustmentReasons: Array[String],

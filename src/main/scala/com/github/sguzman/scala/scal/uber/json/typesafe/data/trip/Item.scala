@@ -6,6 +6,6 @@ case class Item(
                amount: String,
                itemType: String,
                shouldShowPlusSign: Boolean,
-               disclaimer: String,
+               disclaimer: Option[String],
                recognizedAt: Option[Long]
                )
