@@ -42,7 +42,6 @@ object Util {
           case Failure(_) => false
         }
       ) {
-        println(s"Putting key:${req.url}, value:${v.body}")
         this.map.put(req.url, v.body)
         val bw = new PrintWriter(new FileWriter(this.file))
         bw.write(this.map.asJson.toString)
