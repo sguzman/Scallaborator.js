@@ -23,11 +23,11 @@ object Main {
     val statementUUIDs = allDataStatements map (_.uuid)
 
     val partialToUUID = toTripUUID(cookie, _: UUID)
-    val tripUUIDS = statementUUIDs.par.flatMap(partialToUUID)
+    val tripUUIDS = statementUUIDs.flatMap(partialToUUID)
     println(tripUUIDS.length)
 
     val partialToTrip = trip(cookie, _: UUID)
-    val grabTrip = tripUUIDS.par.map(partialToTrip)
+    val grabTrip = tripUUIDS.map(partialToTrip)
     println(grabTrip)
   }
 
