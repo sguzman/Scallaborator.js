@@ -3,9 +3,10 @@ package com.github.sguzman.scala.scal.uber
 import java.net.SocketTimeoutException
 
 import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.input.{Answer, Email, UserIdentifier}
-import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.output.Stage
+import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.output.EmailOutput
 import io.circe.generic.auto._
 import io.circe.parser.parse
+import io.circe.parser.decode
 import io.circe.syntax._
 
 import scala.util.{Failure, Success}
@@ -20,10 +21,8 @@ object Main {
     val logged = logMeIn(initCookie, email, pass)
     println(logged.body)
 
-    val obj = logged.body.asJson
+    val obj = decode[EmailOutput](logged.body)
     println(obj)
-
-    println(obj.as[Stage])
   }
 
   def requestUntilSuccess(req: HttpRequest): HttpResponse[String] =
