@@ -21,6 +21,6 @@ case class Trip(
                is_cash_trip: Boolean,
                total: String,
                trip_id: UUID,
-               currency_code: String,
+               currency_code: Option[String],
                distance: String
                )
