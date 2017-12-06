@@ -35,8 +35,6 @@ object Main {
     val url = s"https://partners.uber.com/p3/money/statements/view/$statementUUID"
     val request = Http(url).header("Cookie", cookie)
     val response = Util.requestUntilSuccess(request, (t, i) => {
-      val obj = decode[Statement](t.body)
-      if (obj.isLeft) println(obj)
       util.Try(decode[Statement](t.body).right.get.body.driver.trip_earnings.trips.keySet.toList) match {
         case Success(v) =>
           println(s"!!!$statementUUID!!! @ $i")
