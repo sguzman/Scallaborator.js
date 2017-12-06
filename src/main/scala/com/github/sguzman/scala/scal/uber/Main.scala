@@ -34,7 +34,7 @@ object Main {
   def toTripUUID(cookie: String, statementUUID: UUID): List[UUID] = {
     val url = s"https://partners.uber.com/p3/money/statements/view/$statementUUID"
     val request = Http(url).header("Cookie", cookie)
-    val response = Util.requestUntilSuccess(request, (t, i) => {
+    val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Statement](t.body).right.get.body.driver.trip_earnings.trips.keySet.toList) match {
         case Success(v) =>
           println(s"!!!$statementUUID!!! @ $i")
@@ -43,7 +43,7 @@ object Main {
       }
     })
 
-    val obj = decode[Statement](response.body)
+    val obj = decode[Statement](response)
     val right = obj.right
     val getRight = right.get
     val uuids = getRight.body.driver.trip_earnings.trips.keySet.toList
@@ -53,7 +53,7 @@ object Main {
   def trip(cookie: String, tripUUID: UUID): Trip = {
     val url = s"https://partners.uber.com/p3/money/trips/trip_data/$tripUUID"
     val request = Http(url).header("Cookie", cookie)
-    val response = Util.requestUntilSuccess(request, (t, i) => {
+    val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Trip](t.body).right.get) match {
         case Success(v) =>
           println(s"!!!$tripUUID!!! @ $i")
@@ -62,7 +62,7 @@ object Main {
       }
     })
 
-    val body = response.body
+    val body = response
     val obj = decode[Trip](body).right.get
     obj
   }
