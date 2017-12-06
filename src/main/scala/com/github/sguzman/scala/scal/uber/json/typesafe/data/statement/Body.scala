@@ -9,7 +9,7 @@ case class Body(
                cash_collected: String,
                total_earned: String,
                cash_summary: Option[String],
-               misc_non_fee_breakdowns: Option[String],
+               misc_non_fee_breakdowns: Option[MiscNonFeeBreakdown],
                trip_earnings: TripEarnings,
                partner: Partner,
                ending_at: String,

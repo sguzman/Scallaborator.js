@@ -12,7 +12,7 @@ case class Driver(
                  first_name: String,
                  email: String,
                  last_name: String,
-                 misc_non_fee_breakdown: Option[String],
+                 misc_non_fee_breakdown: Option[MiscNonFeeBreakdown],
                  driver_uuid: UUID,
                  total: String,
                  picture_url: String,
