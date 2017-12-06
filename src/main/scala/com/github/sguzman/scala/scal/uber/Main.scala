@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.github.sguzman.scala.scal.uber.json.typesafe.data.all_data.AllDataStatement
 import com.github.sguzman.scala.scal.uber.json.typesafe.data.statement.Statement
+import com.github.sguzman.scala.scal.uber.json.typesafe.data.trip.Trip
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
@@ -22,9 +23,12 @@ object Main {
     val statementUUIDs = allDataStatements map (_.uuid)
 
     val partialToUUID = toTripUUID(cookie, _: UUID)
-    val statementResponses = statementUUIDs.par.flatMap(partialToUUID)
+    val tripUUIDS = statementUUIDs.par.flatMap(partialToUUID)
+    println(tripUUIDS.length)
 
-    println(statementResponses.length)
+    val partialToTrip = trip(cookie, _: UUID)
+    val grabTrip = tripUUIDS.par.map(partialToTrip)
+    println(grabTrip)
   }
 
   def toTripUUID(cookie: String, statementUUID: UUID): List[UUID] = {
@@ -37,9 +41,7 @@ object Main {
         case Success(v) =>
           println(s"!!!$statementUUID!!! @ $i")
           true
-        case Failure(e) =>
-          println(s"Failed on $statementUUID $e:${t.body} on attempt $i")
-          false
+        case Failure(e) => false
       }
     })
 
@@ -48,5 +50,24 @@ object Main {
     val getRight = right.get
     val uuids = getRight.body.driver.trip_earnings.trips.keySet.toList
     uuids
+  }
+
+  def trip(cookie: String, tripUUID: UUID): Trip = {
+    val url = s"https://partners.uber.com/p3/money/trips/trip_data/$tripUUID"
+    val request = Http(url).header("Cookie", cookie)
+    val response = Util.requestUntilSuccess(request, (t, i) => {
+      val obj = decode[Trip](t.body)
+      if (obj.isLeft) println(obj)
+      util.Try(decode[Trip](t.body).right.get) match {
+        case Success(v) =>
+          println(s"!!!$tripUUID!!! @ $i")
+          true
+        case Failure(e) => false
+      }
+    })
+
+    val body = response.body
+    val obj = decode[Trip](body).right.get
+    obj
   }
 }
