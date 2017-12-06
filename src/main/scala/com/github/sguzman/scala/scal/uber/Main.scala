@@ -14,18 +14,18 @@ object Main {
   def main(args: Array[String]): Unit = {
     val cookie = args.head
     val allData = Util.requestUntilSuccess(
-      Util.getRequest("https://partners.uber.com/p3/money/statements/all_data/", cookie)
+      Util.getRequest("https://partners.uber.com/p3/money/statements/all_data/", config.cookie)
     )
 
     val str = allData.body
     val allDataStatements = decode[Array[AllDataStatement]](str).right.get
     val statementUUIDs = allDataStatements map (_.uuid)
 
-    val partialToUUID = toTripUUID(cookie, _: UUID)
+    val partialToUUID = toTripUUID(config.cookie, _: UUID)
     val tripUUIDS = statementUUIDs.flatMap(partialToUUID)
     println(tripUUIDS.length)
 
-    val partialToTrip = trip(cookie, _: UUID)
+    val partialToTrip = trip(config.cookie, _: UUID)
     val grabTrip = tripUUIDS.map(partialToTrip)
     println(grabTrip)
   }
