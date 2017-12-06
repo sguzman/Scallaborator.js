@@ -1,9 +1,7 @@
 package com.github.sguzman.scala.scal.uber.json.typesafe.nav
 
-import java.nio.file.Path
-
 case class Fares(
-                  url: Path,
+                  url: String,
                   name: String,
                   primarySideNav: Int
                 )
