@@ -15,8 +15,7 @@ object Main {
     val cookie = args.head
     val allData = Util.requestUntilSuccess(
       Http("https://partners.uber.com/p3/money/statements/all_data/")
-        .header("Cookie", cookie)
-    , _.is2xx && _ == 0)
+        .header("Cookie", cookie))
 
     val str = allData.body
     val allDataStatements = decode[Array[AllDataStatement]](str).right.get
