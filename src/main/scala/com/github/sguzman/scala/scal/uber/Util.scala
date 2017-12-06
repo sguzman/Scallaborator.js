@@ -3,13 +3,17 @@ package com.github.sguzman.scala.scal.uber
 import java.io.{File, FileWriter, PrintWriter}
 import java.net.SocketTimeoutException
 
+import fr.hmil.roshttp.HttpRequest
+import monix.execution.Scheduler.Implicits.global
+import fr.hmil.roshttp.response.SimpleHttpResponse
 import io.circe.parser.decode
 import io.circe.syntax._
 
 import scala.collection.mutable
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.io.Source
 import scala.util.{Failure, Success}
-import scalaj.http.{Http, HttpRequest, HttpResponse}
 
 object Util {
   private val file = new File("./cache.json")
@@ -22,8 +26,8 @@ object Util {
     Source.fromFile(file).getLines.mkString("\n")).right.get
 
   @scala.annotation.tailrec
-  def requestUntilSuccess(req: HttpRequest, attempt: Int = 0): HttpResponse[String] =
-    util.Try(req.asString) match {
+  def requestUntilSuccess(req: HttpRequest, attempt: Int = 0): SimpleHttpResponse =
+    util.Try(Await.result(req.send, Duration.Inf)) match {
       case Success(v) => v
       case Failure(e) => e match {
         case _: SocketTimeoutException => requestUntilSuccess(req, attempt + 1)
@@ -31,11 +35,11 @@ object Util {
     }
 
   @scala.annotation.tailrec
-  def requestUntilSuccessIndef(req: HttpRequest, predicate: (HttpResponse[String], Int) => Boolean = (_, _) => true, attempt: Int = 0): String =
+  def requestUntilSuccessIndef(req: HttpRequest, predicate: (SimpleHttpResponse, Int) => Boolean = (_, _) => true, attempt: Int = 0): String =
     if (this.map.contains(req.url)) {
       println(s"Found ${req.url} in cache - retrieving")
       this.map(req.url)
-    } else util.Try(req.asString) match {
+    } else util.Try(Await.result(req.send, Duration.Inf)) match {
       case Success(v) => if (
         util.Try(predicate(v, attempt)) match {
           case Success(u) => u
@@ -53,17 +57,8 @@ object Util {
       }
     }
 
-  def getRequest(url: String, cookie: String): HttpRequest = Http(url).header("Cookie", cookie)
+  def getRequest(url: String, cookie: String): HttpRequest =
+    HttpRequest(url).withHeader("Cookie", cookie)
 
-  def getRequest(url: String) = Http(url)
-
-  def postRequestData(url: String, cookie: String, body: String): HttpRequest =
-    Http(url).header("Cookie", cookie).postData(body)
-
-  def postDataCSRF(url: String, cookie: String, body: String, csrf: String): HttpRequest =
-    Http(url)
-      .header("Cookie", cookie)
-      .header("x-csrf-token", csrf)
-      .header("Content-Type", "application/json")
-      .postData(body)
+  def getRequest(url: String): HttpRequest = HttpRequest(url)
 }
