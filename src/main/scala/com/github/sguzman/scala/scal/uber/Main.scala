@@ -1,24 +1,20 @@
 package com.github.sguzman.scala.scal.uber
 
-import fr.hmil.roshttp.HttpRequest
-import fr.hmil.roshttp.Protocol.HTTPS
-import monix.execution.Scheduler.Implicits.global
+import com.github.sguzman.scala.scal.uber.json.typesafe.nav.Item
+import com.google.gson.GsonBuilder
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scalaj.http.Http
 
 object Main {
   def main(args: Array[String]): Unit = {
     val cookie = args.head
 
-    val request = HttpRequest()
-      .withProtocol(HTTPS)
-      .withHost("partners.uber.com")
-      .withPath("/p3/platform_chrome_nav_data")
+    val request = Http("https://partners.uber.com/p3/platform_chrome_nav_data")
+    val response = request.header("Cookie", cookie).asString
 
-    val responseFuture = request.send
-    val response = Await.result(responseFuture, Duration.Inf)
-    println(response.statusCode)
-    println(response.body)
+    val gson = new GsonBuilder().create
+
+    val json = gson.fromJson(response.body, classOf[Item])
+    println(json)
   }
 }

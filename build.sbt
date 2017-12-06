@@ -23,12 +23,9 @@ resolvers ++= Seq(
 
 /** Source Dependencies */
 libraryDependencies ++= Seq(
-  "io.circe" % "circe-core_2.12" % "0.9.0-M2",
-  "io.circe" % "circe-generic_2.12" % "0.9.0-M2",
-  "io.circe" % "circe-parser_2.12" % "0.9.0-M2",
   "com.google.code.gson" % "gson" % "2.8.2",
   "com.criteo.lolhttp" % "lolhttp_2.12" % "0.8.1",
-  "fr.hmil" % "roshttp_2.12" % "2.0.2",
+  "org.scalaj" % "scalaj-http_2.12" % "2.3.0",
   "org.feijoas" % "mango_2.12" % "0.14"
 )
 
