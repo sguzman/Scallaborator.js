@@ -27,10 +27,10 @@ object Login {
     val response = getLoginPage(initCookie)
 
     val emailResponse = postEmail(response, email)
-    val _ = decode[EmailOutput](emailResponse.body)
+    decode[EmailOutput](emailResponse.body)
 
     val password = postPassword(emailResponse, pass)
-    val _ = decode[Password](password.body)
+    decode[Password](password.body)
     //TODO - implement login features
     initCookie
   }
