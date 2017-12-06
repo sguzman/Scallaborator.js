@@ -1,4 +1,4 @@
-package com.github.sguzman.scala.scal.uber.json.typesafe.login.all_data
+package com.github.sguzman.scala.scal.uber.json.typesafe.data.all_data
 
 import java.util.UUID
 
