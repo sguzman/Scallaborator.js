@@ -58,7 +58,7 @@ object Main {
 
   def trip(cookie: String, tripUUID: UUID): Trip = {
     val url = s"https://partners.uber.com/p3/money/trips/trip_data/$tripUUID"
-    val request = Util.getRequest(url).header("Cookie", cookie)
+    val request = Util.getRequest(url, cookie)
     val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Trip](t.body).right.get) match {
         case Success(_) =>
