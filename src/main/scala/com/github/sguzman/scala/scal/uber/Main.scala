@@ -9,14 +9,13 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 
 import scala.util.{Failure, Success}
-import scalaj.http.Http
 
 object Main {
   def main(args: Array[String]): Unit = {
     val cookie = args.head
     val allData = Util.requestUntilSuccess(
-      Http("https://partners.uber.com/p3/money/statements/all_data/")
-        .header("Cookie", cookie))
+      Util.getRequest("https://partners.uber.com/p3/money/statements/all_data/", cookie)
+    )
 
     val str = allData.body
     val allDataStatements = decode[Array[AllDataStatement]](str).right.get
@@ -33,7 +32,7 @@ object Main {
 
   def toTripUUID(cookie: String, statementUUID: UUID): List[UUID] = {
     val url = s"https://partners.uber.com/p3/money/statements/view/$statementUUID"
-    val request = Http(url).header("Cookie", cookie)
+    val request = Util.getRequest(url, cookie)
     val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Statement](t.body).right.get.body.driver.trip_earnings.trips.keySet.toList) match {
         case Success(v) =>
@@ -52,7 +51,7 @@ object Main {
 
   def trip(cookie: String, tripUUID: UUID): Trip = {
     val url = s"https://partners.uber.com/p3/money/trips/trip_data/$tripUUID"
-    val request = Http(url).header("Cookie", cookie)
+    val request = Util.getRequest(url).header("Cookie", cookie)
     val response = Util.requestUntilSuccessIndef(request, (t, i) => {
       util.Try(decode[Trip](t.body).right.get) match {
         case Success(v) =>

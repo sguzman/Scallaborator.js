@@ -9,7 +9,7 @@ import io.circe.syntax._
 import scala.collection.mutable
 import scala.io.Source
 import scala.util.{Failure, Success}
-import scalaj.http.{HttpRequest, HttpResponse}
+import scalaj.http.{Http, HttpRequest, HttpResponse}
 
 object Util {
   private val file = new File("./cache.json")
@@ -53,4 +53,18 @@ object Util {
         case _: SocketTimeoutException => requestUntilSuccessIndef(req, predicate, attempt + 1)
       }
     }
+
+  def getRequest(url: String, cookie: String): HttpRequest = Http(url).header("Cookie", cookie)
+
+  def getRequest(url: String) = Http(url)
+
+  def postRequestData(url: String, cookie: String, body: String): HttpRequest =
+    Http(url).header("Cookie", cookie).postData(body)
+
+  def postDataCSRF(url: String, cookie: String, body: String, csrf: String): HttpRequest =
+    Http(url)
+      .header("Cookie", cookie)
+      .header("x-csrf-token", csrf)
+      .header("Content-Type", "application/json")
+      .postData(body)
 }

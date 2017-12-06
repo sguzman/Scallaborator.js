@@ -1,23 +1,22 @@
 package com.github.sguzman.scala.scal.uber
 
+import com.github.sguzman.scala.scal.uber.Util.requestUntilSuccess
 import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.input.{Answer, Email, UserIdentifier}
 import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.output.EmailOutput
 import com.github.sguzman.scala.scal.uber.json.typesafe.login.password.input
 import com.github.sguzman.scala.scal.uber.json.typesafe.login.password.input.Password
-import com.github.sguzman.scala.scal.uber.Util.requestUntilSuccess
-import io.circe.parser.parse
-import io.circe.parser.decode
 import io.circe.generic.auto._
+import io.circe.parser.{decode, parse}
 import io.circe.syntax._
 
-import scalaj.http.{Http, HttpResponse}
+import scalaj.http.HttpResponse
 
 object Login {
   def loggedIn(cookie: String): Boolean =
     parse(
       requestUntilSuccess(
-        Http("https://partners.uber.com/p3/platform_chrome_nav_data")
-          .header("Cookie", cookie)).body
+        Util.getRequest("https://partners.uber.com/p3/platform_chrome_nav_data", cookie)
+      ).body
     ) match {
       case Left(_) => false
       case Right(_) => true
@@ -37,7 +36,7 @@ object Login {
 
   def getLoginPage(cookie: String): HttpResponse[String] = {
     val url = "https://auth.uber.com/login/?next_url=https%3A%2F%2Fpartners.uber.com"
-    val request = Http(url).header("Cookie", cookie)
+    val request = Util.getRequest(url, cookie)
 
     val response = requestUntilSuccess(request)
     response
@@ -51,11 +50,7 @@ object Login {
     val emailPayload = emailObj.asJson.toString
 
     val postUrl = "https://auth.uber.com/login/handleanswer"
-    val emailRequest = Http(postUrl)
-      .header("Cookie", cookie)
-      .header("x-csrf-token", crsfToken)
-      .header("Content-Type", "application/json")
-      .postData(emailPayload)
+    val emailRequest = Util.postDataCSRF(postUrl, cookie, emailPayload, crsfToken)
 
     val emailResponse = requestUntilSuccess(emailRequest)
     emailResponse
@@ -69,11 +64,7 @@ object Login {
     val body = passObj.asJson.toString
 
     val postUrl = "https://auth.uber.com/login/handleanswer"
-    val passRequest = Http(postUrl)
-      .header("Cookie", cookie)
-      .header("x-csrf-token", crsfToken)
-      .header("Content-Type", "application/json")
-      .postData(body)
+    val passRequest = Util.postDataCSRF(postUrl, cookie, body, crsfToken)
 
     val passResponse = requestUntilSuccess(passRequest)
     passResponse
