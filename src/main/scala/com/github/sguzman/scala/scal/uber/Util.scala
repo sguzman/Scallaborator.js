@@ -7,7 +7,7 @@ import scalaj.http.{HttpRequest, HttpResponse}
 
 object Util {
   @scala.annotation.tailrec
-  def requestUntilSuccess(req: HttpRequest, predicate: (HttpResponse[String], Int) => Boolean = () => true, attempt: Int = 0): HttpResponse[String] =
+  def requestUntilSuccess(req: HttpRequest, predicate: (HttpResponse[String], Int) => Boolean = (_, _) => true, attempt: Int = 0): HttpResponse[String] =
     util.Try(req.asString) match {
       case Success(v) => if (
         util.Try(predicate(v, attempt)) match {
