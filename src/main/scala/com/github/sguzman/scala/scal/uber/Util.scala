@@ -13,9 +13,13 @@ import scalaj.http.{HttpRequest, HttpResponse}
 
 object Util {
   private val file = new File("./cache.json")
+  if (file.createNewFile()) {
+    val bw = new PrintWriter(new FileWriter(this.file))
+    bw.write("{}")
+    bw.close()
+  }
   val map: mutable.Map[String, String] = decode[mutable.Map[String,String]](
-    if (file.createNewFile()) "{}"
-    else Source.fromFile(file).getLines.mkString("\n")).right.get
+    Source.fromFile(file).getLines.mkString("\n")).right.get
 
   @scala.annotation.tailrec
   def requestUntilSuccess(req: HttpRequest, attempt: Int = 0): HttpResponse[String] =
