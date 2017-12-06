@@ -2,31 +2,60 @@ package com.github.sguzman.scala.scal.uber
 
 import java.net.SocketTimeoutException
 
+import com.github.sguzman.scala.scal.uber.json.typesafe.login.email.input.{Answer, Email, UserIdentifier}
 import io.circe.parser.parse
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 import scala.util.{Failure, Success}
-import scalaj.http.Http
+import scalaj.http.{Http, HttpRequest, HttpResponse}
 
 object Main {
   def main(args: Array[String]): Unit = {
     val initCookie = args.head
-    val url = "https://partners.uber.com/p3/platform_chrome_nav_data"
-    val logged = loggedIn(initCookie)
+    val email = args(1)
+    val pass = args(2)
+
+    val logged = logMeIn(initCookie, email, pass)
     println(logged)
   }
 
-  def body(url: String, cookie: String): String =
-    util.Try(Http(url).header("Cookie", cookie).asString) match {
-      case Success(v) => v.body
+  def requestUntilSuccess(req: HttpRequest): HttpResponse[String] =
+    util.Try(req.asString) match {
+      case Success(v) => v
       case Failure(e) => e match {
-        case _: SocketTimeoutException => body(url, cookie)
+        case _: SocketTimeoutException => requestUntilSuccess(req)
       }
     }
 
   def loggedIn(cookie: String): Boolean =
-    parse(body("https://partners.uber.com/p3/platform_chrome_nav_data", cookie)
+    parse(
+      requestUntilSuccess(
+        Http("https://partners.uber.com/p3/platform_chrome_nav_data")
+          .header("Cookie", cookie)).body
     ) match {
       case Left(_) => false
       case Right(_) => true
     }
+
+  def logMeIn(initCookie: String, email: String, pass: String) = {
+    val url = "https://auth.uber.com/login/?next_url=https%3A%2F%2Fpartners.uber.com"
+    val getRequest = Http(url).header("Cookie", initCookie)
+
+    val response = requestUntilSuccess(getRequest)
+    val getCookie = response.cookies.mkString("; ")
+    val crsfToken = response.header("x-csrf-token").get
+
+    val objectEmailStr = Email(Answer("VERIFY_INPUT_EMAIL", UserIdentifier(email)), init = true)
+    val emailPayload = objectEmailStr.asJson.toString
+
+    val postUrl = "https://auth.uber.com/login/handleanswer"
+    val emailRequest = Http(postUrl)
+      .header("Cookie", getCookie)
+      .header("x-csrf-token", crsfToken)
+      .header("Content-Type", "application/json")
+      .postData(emailPayload)
+    val emailResponse = requestUntilSuccess(emailRequest)
+    emailResponse
+  }
 }
