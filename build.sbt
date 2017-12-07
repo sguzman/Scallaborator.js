@@ -27,7 +27,6 @@ libraryDependencies ++= Seq(
   "io.circe" % "circe-generic_2.12" % "0.9.0-M2",
   "io.circe" % "circe-parser_2.12" % "0.9.0-M2",
   "fr.hmil" % "roshttp_2.12" % "2.0.2",
-  "com.github.scopt" % "scopt_2.12" % "3.7.0"
 )
 
 /** Make sure to fork on run */
