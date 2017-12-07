@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   "io.circe" % "circe-generic_2.12" % "0.9.0-M2",
   "io.circe" % "circe-parser_2.12" % "0.9.0-M2",
   "fr.hmil" % "roshttp_2.12" % "2.0.2",
-  "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+  "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+  "io.surfkit" %%% "scalajs-google-maps" % "0.0.3-SNAPSHOT"
 )
 
 /** Make sure to fork on run */
