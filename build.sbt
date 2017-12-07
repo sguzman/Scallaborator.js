@@ -1,3 +1,6 @@
+enablePlugins(ScalaJSPlugin)
+scalaJSUseMainModuleInitializer := true
+
 /** Name of project */
 name := "Scalllobarator"
 
