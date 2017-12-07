@@ -1,17 +1,24 @@
 package com.github.sguzman.scala.scal.uber
 
-import org.scalajs.dom
+import google.maps.LatLng
 import org.scalajs.dom.document
+
+import scala.scalajs.js
 
 object Main {
   def main(args: Array[String]): Unit = {
-    appendPar(document.body, "Hello world")
+    google.maps.event.addDomListener(org.scalajs.dom.window, "load", initialize())
   }
 
-  def appendPar(targetNode: dom.Node, text: String): Unit = {
-    val parNode = document.createElement("p")
-    val textNode = document.createTextNode(text)
-    parNode.appendChild(textNode)
-    targetNode.appendChild(parNode)
+  def initialize() = js.Function {
+    val opts = google.maps.MapOptions(
+      center = new LatLng(34.414513, -119.861720),
+      zoom = 13,
+      panControl = false,
+      streetViewControl = false,
+      mapTypeControl = false
+    )
+    val gmap = new google.maps.Map(document.getElementById("map"), opts)
+    ""
   }
 }
