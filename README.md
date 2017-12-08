@@ -1,6 +1,7 @@
+![Screenshot](https://i.imgur.com/bRgItnG.png)
+
 Scaluber.JS
 ===
-
 ![A scala project](https://i.imgur.com/VdpZ4YQ.png)
 
 [![HitCount](http://hits.dwyl.io/sguzman/Scallaborator.svg)](http://hits.dwyl.io/sguzman/Scallaborator)
