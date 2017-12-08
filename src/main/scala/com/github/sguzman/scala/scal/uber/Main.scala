@@ -38,7 +38,12 @@ object Main {
             })
             .map(t => (t._1.toDouble, t._2.toDouble))
             .map(t => new google.maps.LatLng(t._1, t._2))
-          latLngs.toList foreach println
+
+          val markers = latLngs.map(t => new google.maps.Marker(google.maps.MarkerOptions(
+            map = gmap.get,
+            position = t,
+            clickable = true
+          )))
         case error: Failure[Array[Tweet]] => Console.err.println(error)
     })
   }
